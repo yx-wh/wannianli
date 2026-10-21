@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">万年历</string>
+    <string name="widget_description">今日公历、农历、干支与节日</string>
+    <string name="widget_name_4x2">万年历 4×2</string>
+    <string name="widget_name_4x1">万年历 4×1</string>
+    <string name="widget_name_2x2">万年历 2×2</string>
+</resources>
