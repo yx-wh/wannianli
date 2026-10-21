@@ -1,8 +1,19 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
+
+// release 签名信息从 local.properties 读取；缺失时自动跳过签名，不影响 debug 构建
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val releaseStoreFile: String? = localProps.getProperty("RELEASE_STORE_FILE")?.takeIf { it.isNotBlank() }
+val releaseStorePassword: String? = localProps.getProperty("RELEASE_STORE_PASSWORD")?.takeIf { it.isNotBlank() }
+val releaseSigningReady = releaseStoreFile != null && releaseStorePassword != null
 
 android {
     namespace = "com.yx.wannianli"
@@ -16,6 +27,18 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        create("release") {
+            if (releaseSigningReady) {
+                storeFile = rootProject.file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = localProps.getProperty("RELEASE_KEY_ALIAS") ?: "wannianli"
+                keyPassword = localProps.getProperty("RELEASE_KEY_PASSWORD")?.takeIf { it.isNotBlank() }
+                    ?: releaseStorePassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -23,6 +46,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (releaseSigningReady) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

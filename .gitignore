@@ -9,5 +9,14 @@ local.properties
 *.iml
 captures/
 
+# 签名密钥（绝对不要提交）
+*.jks
+*.keystore
+
 # 系统
 .DS_Store
+
+# 编辑器临时文件
+*~
+*.swp
+*.un~
